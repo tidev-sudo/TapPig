@@ -1,5 +1,7 @@
 package ru.itschool.tappig;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,6 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static  final String PREFS_NAME = "PigsPrefs";
+    private static final String KEY_N_TAPS = "nTaps";
 
     int nTaps;
     TextView textTop;
@@ -32,13 +37,26 @@ public class MainActivity extends AppCompatActivity {
         textTop = findViewById(R.id.textTop);
         textBottom = findViewById(R.id.textBottom);
         imgPig = findViewById(R.id.imagePig);
+        loadPigs();
+        updateTextBottom();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        savePigs();
     }
 
     public void tap(View view) {
 
         nTaps++;
-        textBottom.setText("вы потрогали свинью " + nTaps + end());
+        updateTextBottom();
 
+    }
+
+    void updateTextBottom(){
+        textBottom.setText("вы потрогали свинью " + nTaps + end());
     }
 
     String end() {
@@ -46,5 +64,16 @@ public class MainActivity extends AppCompatActivity {
             return " раза";
         }
         return" раз";
+    }
+
+    public void savePigs(){
+
+        SharedPreferences prefs = getSharedPreferences("PigsPrefs", Context.MODE_PRIVATE);
+        prefs.edit().putInt("nun taps", nTaps).apply();
+    }
+
+    public void loadPigs(){
+        SharedPreferences prefs = getSharedPreferences("PigsPrefs", Context.MODE_PRIVATE);
+        nTaps = prefs.getInt("nun taps", 0);
     }
 }
